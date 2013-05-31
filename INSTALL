@@ -1,0 +1,31 @@
+TODO.  Work in progress...
+
+
+#wiring pi install
+sudo apt-get install git-core
+git clone git://git.drogon.net/wiringPi
+cd wiringPi
+./build
+
+
+
+
+
+
+
+
+#older stuff
+
+./setup.py
+./create_db.py
+
+edit config.py, fill in variables
+
+# install pygame 
+sudo apt-get install python-pygame
+
+
+python version (not needed I dont think)
+
+sudo apt-get install python-dev python-setuptools
+pip install wiringpi2

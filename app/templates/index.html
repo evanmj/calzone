@@ -1,0 +1,39 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h4>Security System:</h4>
+{% include 'flash.html' %}
+
+<div class="form-actions">
+  <a class="btn btn-large" href="#"><i class="icon-lock"></i> Arm System</a>
+</div>
+
+
+  <div class="form-actions">
+    <div class=span3>
+
+ {% if ArmedStatus %}
+	<FORM METHOD="LINK" ACTION="{{ url_for('disarm') }}">
+		  <button type="submit" class="btn btn-danger btn-large btn-block">Disarm System</button>
+	</FORM>
+ {% else %}
+	<FORM METHOD="LINK" ACTION="{{ url_for('arm') }}">
+		  <button type="submit" class="btn btn-success btn-large btn-block">Arm System Immediate</button>
+	</FORM>
+ {% endif %}
+
+ {% if ArmedStatus %}
+        <FORM METHOD="LINK" ACTION="{{ url_for('disarm') }}">
+                  <button type="submit" class="btn btn-danger btn-large btn-block">Disarm System</button>
+        </FORM>
+ {% else %}
+        <FORM METHOD="LINK" ACTION="{{ url_for('arm') }}">
+                  <button type="submit" class="btn btn-success btn-large btn-block">Arm System Silent</button>
+        </FORM>
+ {% endif %}
+
+     </div>
+  </div>
+
+{% endblock %}

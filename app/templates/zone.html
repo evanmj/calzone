@@ -1,0 +1,13 @@
+    <tr>
+        <td>
+	     {{ zone.name }}
+	</td>
+	<td>
+           {% if zone.secured %}
+		<span class="label label-success">Zone Secured</span>
+           {% else %}
+		<span class="label label-important">Zone Breached</span>
+           {% endif %}
+        </td>
+    </tr>
+

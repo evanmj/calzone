@@ -1,0 +1,15 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<h4 class="text-info">Active Zones:</h4>
+{% include 'flash.html' %}
+
+<table class="table table-condensed table-striped table-bordered">
+  {% for zone in zones %}
+      {% include 'zone.html' %}
+  {% endfor %}
+</table>
+
+{% endblock %}
