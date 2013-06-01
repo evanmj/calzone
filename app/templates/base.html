@@ -28,13 +28,13 @@
               <li><a href="{{ url_for('history') }}">History</a></li>
               {% endif %}
             </ul>
-          <div class="nav-collapse collapse">
-            {% if g.user.is_authenticated() %}
-	    <ul class="nav">	      
-               <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-            {% endif %}
-          </div>
+          {% if g.user.is_authenticated() %}
+            <div class="nav-collapse collapse">
+              <ul class="nav">	      
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+              </ul>
+            </div>
+          {% endif %}
         </div>
       </div>
       <div class="row">
