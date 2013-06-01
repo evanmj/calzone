@@ -14,7 +14,7 @@ AUTHOR
 
 LICENSE
 
-    This script is in the public domain, free from copyrights or restrictions.
+    See LICENSE file in project.
 
 VERSION
 
