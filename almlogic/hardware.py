@@ -86,7 +86,7 @@ class hardware:
 
         #use wiringPi to set up input pins
         for zone in self.ZONES:
-            print "Setting Input, wiringPi pin: " + str(zone.pin) + " gpio pin: " + str(self.PinDict[int(zone.pin)])
+            print "Setting Input, wiringPi pin: " + str(zone.pin) 
             #set pin to input (using wiringpi numbers, not gpio numbers)
             os.system("gpio mode " + str(zone.pin) + " in")
             #set pull up resistor
@@ -107,7 +107,7 @@ class hardware:
         for zone in self.ZONES:   # for every zone in our list of zone dictionaries
 
             #read pin status using gpio program
-            value = os.popen("gpio -p read " + str(zone.pin)).read().rstrip()
+            value = os.popen("gpio read " + str(zone.pin)).read().rstrip()
 
             #convert string returned by wiringPi to a boolean
             if value == '0':

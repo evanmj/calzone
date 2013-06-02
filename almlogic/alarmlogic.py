@@ -32,6 +32,9 @@ import os
 import sys
 import time
 
+#get pygame for audio
+import pygame
+
 #get database models and objects
 from almlogic import models
 from almlogic import db
@@ -91,6 +94,9 @@ def init():
     db.session.commit()  # write to db
     db.session.close()   # close session?
 
+    #init pygame audio mixer
+    pygame.mixer.init()
+
 
 def UpdateSettings():   #pulls settings from database
 
@@ -104,10 +110,21 @@ def UpdateSettings():   #pulls settings from database
    #     for p in peanuts:
     #        print p.name + '      ' + str(p.secured)
 
+def StartAlarmSound(soundfile):
+    """This funcion will start the alarm wav file provided"""
+    pygame.mixer.music.load(soundfile)
+    #play sound, loop forever
+    pygame.mixer.music.play(-1)
+
+def StopAlarmSound():
+    pygame.mixer.music.stop()
+    print 'Stopping alarm Sound...'
+
 def Run():
 
     #locals
     AllZonesSecured = False
+    Alarming = False # holds alarming status... if alarming, siren should be sounding, etc.  #TODO: move this to status db
     ZONES_AsArmed = {} # create empty stucture   #todo, maybe do db of this, it won't persist if power outage... or maybe it will?
     ZoneStateStored = False
 
@@ -132,7 +149,8 @@ def Run():
         for zone in ZONES:
             print zone.name.ljust(20) + str(zone.secured)
 
-        if Armed.value:  
+        if Armed.value == '1':  
+            print 'main armed loop running'
             if not ZoneStateStored: #on first arm since disarm, make a copy$
                 for zone in ZONES:      #store the as armed state of th$
                     ZONES_AsArmed[zone.name] = zone.secured #store $
@@ -142,23 +160,43 @@ def Run():
                 if ZONES_AsArmed[zone.name] == zone.secured:  #does cur$
                     pass  #still armed.  
                 else:           # zones changed state!
-                    print 'System Armed: Ahhh! zone changed state.'
+                    # note: the system stays armed even if alarming, until a user disarms.
+                    print 'System Armed: Ahhh! zone changed state while Armed!.'
                     ZoneStateStored = False
-                    Armed.value = '0'  #set system disarmed in db
-                    db.session.commit() #write db data
-                    #todo: explode with sound
-                    #todo: break this for loop!!!!!
+                    Alarming = True
+                    db.session.commit() #write db data, which should include the changes to the ZONES cursor
+                    #start sounding alarm
+                    StartAlarmSound('alarm_missle_launch.wav')
+                    #end this for loop
+                    break 
         else:                                   #not armed
             print ' '            
             print 'System Disarmed'
 
-            # TODO:  ths can be done in a single db query instead.  Also currently Unused.
-            AllZonesSecured = True # set this, so if any are not, we will unset it$
-            for zone in ZONES:
-            # determine zone secured bit.
-                if not zone.secured:
-                    AllZonesSecured = False
+        # AllZonesSecured is just for a notice on the web that says all doors/windows/zones are secured.
+        # Note, you can arm the system with one or more zones unsecured, but it should warn you, etc.
+        #      This is needed because I have a screen dog door and I'd like to be able to leave the 
+        #      back door open and still arm the system and watch for state change.
+           
+        # TODO:  ths can be done in a single db query instead.  Also currently Unused.
+        AllZonesSecured = True # set this, so if any are not, we will unset it$
+        for zone in ZONES:
+        # determine zone secured bit.
+            if not zone.secured:
+                AllZonesSecured = False
 
+        #system is in alarm state, probably siren is sounding, user has not acknowledged it yet.
+        if Alarming and Armed.value == '1':
+            print 'System is Alarming!!!!'
+            
+
+        #system is alarming, but user has just acknowledged it by a disarm request via the web, timeout setting, etc.
+        if Alarming and Armed.value == '0':
+            Alarming = False
+            StopAlarmSound()
+
+
+        #nap for one cycle
         time.sleep(1)
 
 
