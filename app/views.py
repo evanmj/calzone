@@ -138,16 +138,18 @@ def logout():
 
 #define history route
 @app.route('/history')
+@app.route('/history/<int:page>')
 @login_required
-def history():
-    HISTORY = models.History.query.order_by("timestamp desc")  #pull history data from database
-    return render_template('history.html',history = HISTORY)  #pass history to history template
+def history(page = 1):
+    #pull paginated history from db... paginate(page,items per page,empty list on error)
+    HISTORY = models.History.query.order_by("timestamp desc").paginate(page, NOTICES_PER_PAGE, False)
+    return render_template('history.html',history = HISTORY,curr_page = page)  #pass history to history template
   
 @app.route('/clearhistory')
 @login_required
 def clearhistory():
     #TODO: There is a better way to do this I'm sure.
-    #TODO: Add Confirmation popup or something.
+    #TODO: Add Confirmation popup or something.  Also, this should go on the admin page.
     HISTORY = models.History.query.order_by("timestamp desc")  #pull history data from database
     for histdata in HISTORY:
         db.session.delete(histdata)

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h4 class="text-info">History:</h4>
+<h4 class="text-info">History: (todo, add zone change junk)</h4>
 {% include 'flash.html' %}
 <table class="table table-condensed table-striped table-bordered">
   <thead>
@@ -25,13 +25,34 @@
   </thead>
 
   <tbody>
-  {% for histdata in history %}
-     {% include 'histdata.html' %}
-  {% endfor %}
+    {# Note: items used here since it is a pagination object #}
+    {% for histdata in history.items %} 
+      {% include 'histdata.html' %}
+    {% endfor %}
   </tbody>
 
 </table>
 
+<center>
+  <div class="pagination">
+    <ul>
+      {% if history.has_prev %}
+        <li><a href="{{ url_for('history', page = history.prev_num) }}">Prev</a></li>
+      {% else %}
+        <li class="disabled"><a href="#">Prev</a></li>
+      {% endif %} 
+
+        <li><a href="#">{{ curr_page }}</a></li>
+ 
+      {% if history.has_next %}
+        <li><a href="{{ url_for('history', page = history.next_num) }}">Next</a></li>
+      {% else %}
+        <li class="disabled"><a href="#">Next</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</center>
+
 {% endblock %}
 
-{# TODO: Work on widths some, add "8 minutes ago" style column using babel? #}
+{# TODO: Work on widths some, also add "8 minutes ago" style column using babel? #}
