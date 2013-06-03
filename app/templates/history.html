@@ -3,6 +3,8 @@
 
 {% block content %}
 
+{# Start History Table #}
+
 <h4 class="text-info">History: (todo, add zone change junk)</h4>
 {% include 'flash.html' %}
 <table class="table table-condensed table-striped table-bordered">
@@ -33,21 +35,33 @@
 
 </table>
 
+{# Start Pagination #}
+
 <center>
   <div class="pagination">
     <ul>
       {% if history.has_prev %}
-        <li><a href="{{ url_for('history', page = history.prev_num) }}">Prev</a></li>
+        <li><a href="{{ url_for('history', page = history.prev_num) }}">Newer</a></li>
       {% else %}
-        <li class="disabled"><a href="#">Prev</a></li>
-      {% endif %} 
+        <li class="disabled"><a href="#">Newer</a></li>
+      {% endif %}
 
-        <li><a href="#">{{ curr_page }}</a></li>
- 
+      {%- for page in history.iter_pages(left_edge=1, left_current=0, right_current=1, right_edge=1) %}
+        {% if page %}
+          {% if page != history.page %}
+            <li><a href="{{ url_for('history', page = page) }}">{{ page }}</a></li>
+          {% else %}
+          <li class="disabled"><a href="#">{{ page }}</a></li>
+          {% endif %}
+        {% else %}
+            <li><a href="#">...</a></li>
+        {% endif %}
+      {%- endfor %}
+
       {% if history.has_next %}
-        <li><a href="{{ url_for('history', page = history.next_num) }}">Next</a></li>
+        <li><a href="{{url_for('history', page = history.next_num) }}">Older</a></li>
       {% else %}
-        <li class="disabled"><a href="#">Next</a></li>
+        <li class="disabled"><a href="#">Older</a></li>
       {% endif %}
     </ul>
   </div>
