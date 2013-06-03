@@ -9,7 +9,7 @@ from app import app, db, lm, oid, models
 from forms import LoginForm
 
 #import database models for FlaskAlchemy
-from models import User, AlarmStatus, ROLE_USER, ROLE_ADMIN
+from models import User, History, AlarmStatus, ROLE_USER, ROLE_ADMIN
 
 #import python exensions
 from datetime import datetime
@@ -70,6 +70,9 @@ def arm():
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()    
     armed.value = '1'
     db.session.add(armed)
+    now = datetime.now()
+    hist = History(source = g.user.nickname, event = 'Armed By User', timestamp = now)
+    db.session.add(hist)
     db.session.commit()  #write data
     flash('The system has been Armed.')
 #    alarm_notification('Test Zone')   #temp send alarm on arm
@@ -82,6 +85,9 @@ def disarm():
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()
     armed.value = '0'
     db.session.add(armed)
+    now = datetime.now()
+    hist = History(source = g.user.nickname, event = 'Disarmed By User', timestamp = now)
+    db.session.add(hist)
     db.session.commit()  #write data
     flash('The system has been Disarmed.')
     return redirect(url_for('index'))
@@ -131,11 +137,24 @@ def logout():
     
 
 #define history route
-@app.route('/History')
+@app.route('/history')
 @login_required
 def history():
-    return render_template('history.html')
+    HISTORY = models.History.query.order_by("timestamp desc")  #pull history data from database
+    return render_template('history.html',history = HISTORY)  #pass history to history template
   
+@app.route('/clearhistory')
+@login_required
+def clearhistory():
+    #TODO: There is a better way to do this I'm sure.
+    #TODO: Add Confirmation popup or something.
+    HISTORY = models.History.query.order_by("timestamp desc")  #pull history data from database
+    for histdata in HISTORY:
+        db.session.delete(histdata)
+    db.session.commit()
+    return render_template('history.html',history = HISTORY)  #pass history to history template
+    
+
 #define zones route
 @app.route('/zones')
 @login_required

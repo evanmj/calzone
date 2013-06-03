@@ -1,6 +1,7 @@
 from hashlib import md5
 from almlogic import alarmlogic
 from almlogic import db
+from datetime import datetime
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -27,7 +28,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.nickname)
 
-#zones, written by 'hardware.py', read by others.
+#zones, written by 'alarmlogic.py', read by flask.
 class Zones(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64), unique = True)
@@ -49,14 +50,11 @@ class Settings(db.Model):
 #class UserList(db.Model):
 #TODO: User list here for email list, txt list, etc.
 
-
-#class History(db.Model):
-#    id = db.Column(db.Integer, primary_key = True)	#pk
-#    zoneid = db.Column(db.Integer, foreign_key = TRUE)  #fk	
-#    zonename = db.Column(db.String(64))			#TODO: we can ref this with zone id
-#    eventtype = db.Column(db.String(64))		#type of event, arm, disarm, open, close, etc.... Enum this?
-#    user = db.Column(db.String(64)) 		# user nick name or email of the event, if applicable
-#    datetime = db.Column(db.String(64))	#todo, chagne this to date time
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key = True)      #pk
+    source = db.Column(db.String(64))                   #source of entry... user, or zone that caused change
+    event = db.Column(db.String(64))                    #type of event, arm, disarm, open, close, etc....
+    timestamp = db.Column(db.DateTime)
 
 
 #ideas for other tables...

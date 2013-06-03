@@ -5,12 +5,33 @@
 
 <h4 class="text-info">History:</h4>
 {% include 'flash.html' %}
-
 <table class="table table-condensed table-striped table-bordered">
+  <thead>
+      <tr>
+        <td width="25%">
+          <b>Event</b>
+        </td>
+        <td width="25%">
+          <b>Source</b>
+        </td>
+        <td width="25%">
+          <b>Date</b>
+        </td>
+        <td width="25%">
+          <b>Time</b>
+        </td>
+      </tr>
+    </font>
+  </thead>
 
- {% include 'histdata.html' %}
+  <tbody>
+  {% for histdata in history %}
+     {% include 'histdata.html' %}
+  {% endfor %}
+  </tbody>
 
 </table>
 
-
 {% endblock %}
+
+{# TODO: Work on widths some, add "8 minutes ago" style column using babel? #}

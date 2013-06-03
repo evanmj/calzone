@@ -1,12 +1,36 @@
     <tr>
         <td>
-	    Event
+           {% if histdata.event == 'Armed By User' %}
+                <span class="label label-info">{{ histdata.event }}</span>
+           {% elif histdata.event == 'Disarmed By User' %}
+                <span class="label label-default">{{ histdata.event }}</span>
+           {% elif histdata.event == 'Alarming!' %}
+                <span class="label label-warning">{{ histdata.event }}</span>
+           {% elif histdata.event == 'Zone Secured' %}
+                <span class="label label-success">{{ histdata.event }}</span>
+           {% elif histdata.event == 'Zone Breached' %}
+                <span class="label label-important">{{ histdata.event }}</span>
+           {% else %}
+               {{ histdata.event }}
+           {% endif %}
+
 	</td>
 	<td>
-	    By
+           {% if histdata.event == 'Armed By User' %}
+	      <font color = #3a87ad> {{ histdata.source  }} </font>
+           {% elif histdata.event == 'Disarmed By User' %}
+	      <font color = #3a87ad> {{ histdata.source  }} </font>
+           {% else %}
+              {{ histdata.source }}
+           {% endif %}
+
 	</td>
 	<td>
-	    5-4-2013 14:15:16
+	    {{ histdata.timestamp.strftime('%m-%d-%Y') }}
+        </td>
+        <td>
+	    {{ histdata.timestamp.strftime('%H:%M:%S') }}
         </td>
     </tr>
 
+{# TODO: Add column for '8 minutes ago' sort of thing.. using babel #}

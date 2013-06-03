@@ -31,6 +31,7 @@ TODO
 import os
 import sys
 import time
+from datetime import datetime
 
 #get pygame for audio
 import pygame
@@ -102,14 +103,6 @@ def UpdateSettings():   #pulls settings from database
 
     pass  #todo
 
-#def printzones():
-#    """This is for debugging.. prints the zones, with status"""
-#    while True:
- #       db.session.commit()
-  #      peanuts = db.session.query(models.Zones).all()
-   #     for p in peanuts:
-    #        print p.name + '      ' + str(p.secured)
-
 def StartAlarmSound(soundfile):
     """This funcion will start the alarm wav file provided"""
     pygame.mixer.music.load(soundfile)
@@ -127,6 +120,7 @@ def Run():
     Alarming = False # holds alarming status... if alarming, siren should be sounding, etc.  #TODO: move this to status db
     ZONES_AsArmed = {} # create empty stucture   #todo, maybe do db of this, it won't persist if power outage... or maybe it will?
     ZoneStateStored = False
+    SoundEnabled = False  
 
     #pull Zone information from DB, which creates a ZONES 'cursor' (like a Dict)
     ZONES = db.session.query(models.Zones).all()
@@ -151,27 +145,39 @@ def Run():
 
         if Armed.value == '1':  
             print 'main armed loop running'
-            if not ZoneStateStored: #on first arm since disarm, make a copy$
-                for zone in ZONES:      #store the as armed state of th$
-                    ZONES_AsArmed[zone.name] = zone.secured #store $
-                ZoneStateStored = True     #we have copied the pins.
+            if not ZoneStateStored: #on first arm since disarm, make a copy of ZONES states
+                for zone in ZONES:      
+                    ZONES_AsArmed[zone.name] = zone.secured #store zone state
+                #mark zone state as stored, and move on
+                ZoneStateStored = True     #store that we have copied the pins.
 
             for zone in ZONES:
-                if ZONES_AsArmed[zone.name] == zone.secured:  #does cur$
+                if ZONES_AsArmed[zone.name] == zone.secured:  #does current status match what we stored?
                     pass  #still armed.  
-                else:           # zones changed state!
-                    # note: the system stays armed even if alarming, until a user disarms.
+                else:           #zones changed state!
+                    #Note: the system stays armed even if alarming, until a user disarms.
                     print 'System Armed: Ahhh! zone changed state while Armed!.'
                     ZoneStateStored = False
                     Alarming = True
-                    db.session.commit() #write db data, which should include the changes to the ZONES cursor
+                    #timestamp zone change
+                    now = datetime.now()
+                    #write history database
+                    z = models.History(source = zone.name, event = 'Alarming!', timestamp = now)
+                    db.session.add(z) 
+                    #write the db data which should include the changes in the ZONES cursor
+                    db.session.commit() 
                     #start sounding alarm
-                    StartAlarmSound('alarm_missle_launch.wav')
+                    if SoundEnabled:
+                        StartAlarmSound('alarm_missle_launch.wav')
                     #end this for loop
                     break 
         else:                                   #not armed
             print ' '            
             print 'System Disarmed'
+
+    #TODO:  watch for any state change.  Probably should re-work the way 'ZONES_AsArmed' works to be 
+    # a function that always checked, even if not armed, and has a changed state since last reset option or something.
+
 
         # AllZonesSecured is just for a notice on the web that says all doors/windows/zones are secured.
         # Note, you can arm the system with one or more zones unsecured, but it should warn you, etc.
@@ -195,28 +201,6 @@ def Run():
             Alarming = False
             StopAlarmSound()
 
-
         #nap for one cycle
         time.sleep(1)
-
-
-
-#zones, written by 'hardware.py', read by others.
-#class Zones(db.Model):
-#    id = db.Column(db.Integer, primary_key = True)
-#    name = db.Column(db.String(64), unique = True)
-#    pin = db.Column(db.SmallInteger, unique = True)
-#    secured = db.Column(db.Boolean)#
-
-#status of the alarm system, written by 'alarmlogic.py'
-#class AlarmStatus(db.Model):
-#    id = db.Column(db.Integer, primary_key = True)
-#    attribute = db.Column(db.String(64), unique = True)
-#    value = db.Column(db.String(64), unique = True)
-
-#settings table, written by web app, read by others...
-#class Settings(db.Model):
-#    id = db.Column(db.Integer, primary_key = True)
-#    attribute = db.Column(db.String(64), unique = True)
-#    value = db.Column(db.String(64), unique = True)
 
