@@ -2,7 +2,7 @@
 """
 SYNOPSIS
 
-    hardware.py
+    calzone -- hardware.py
 
 DESCRIPTION
     
@@ -54,15 +54,10 @@ LICENSE
 
     See LICENSE file in project.
 
-VERSION
-
-    v0.1    - Initial
-	
 TODO
 
     - Handle Outputs
     - Handled Inverting of Inputs/Outputs by Request
-    - Add rev2 PinDict and auto-determine board revision
 """
 
 

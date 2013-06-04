@@ -8,6 +8,10 @@ git clone git://git.drogon.net/wiringPi
 cd wiringPi
 ./build
 
+git clone https://github.com/evanmj/calzone.git
+cd calzone
+mkdir tmp
+
 #build virtual env from tutorial 
 python virtualenv.py flask
 
