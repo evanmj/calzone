@@ -13,6 +13,8 @@ from models import User, History, AlarmStatus, ROLE_USER, ROLE_ADMIN
 
 #import python exensions
 from datetime import datetime
+import re
+import subprocess
 
 #import pre-defined emails
 from emails import alarm_notification
@@ -26,6 +28,17 @@ from config import VALID_USERS
 #globals
 SystemArmed = False
 
+
+
+def CheckProcessRunning(process):
+    """This function checks that alarmlogic.py is running, since it builds the db and keeps information up to date."""
+    s = subprocess.Popen(["ps", "axw"],stdout=subprocess.PIPE)
+    for x in s.stdout:
+        if re.search(process, x):
+            return True
+    return False
+    
+
 #User Loader Callback -
 @lm.user_loader
 def load_user(id):
@@ -35,7 +48,10 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user  #copy flask global into the g. global object
-
+    #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
+    if CheckProcessRunning('alarmlogic.py') == False:
+        return "placeholder for error screen about not having almlogic.py running in background" 
+  
 #handle 404 nicely
 @app.errorhandler(404)
 def internal_error(error):
@@ -66,7 +82,6 @@ def index():
 #arm the system
 @app.route('/arm')
 def arm():
-    #arm the system (almlogic.py program handles that)
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()    
     armed.value = '1'
     db.session.add(armed)
@@ -75,7 +90,6 @@ def arm():
     db.session.add(hist)
     db.session.commit()  #write data
     flash('The system has been Armed.')
-#    alarm_notification('Test Zone')   #temp send alarm on arm
     return redirect(url_for('index'))
 
 #disarm the system
