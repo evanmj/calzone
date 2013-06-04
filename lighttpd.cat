@@ -1,0 +1,12 @@
+fastcgi.server = ("/calzone" =>
+    ((
+        "socket" => "/tmp/calzone-fcgi.sock",
+        "bin-path" => "/home/pi/calzone/runp-sqlite.fcgi",
+        "check-local" => "disable",
+        "max-procs" => 1
+    ))
+)
+
+alias.url = (
+    "/calzone/static/" => "/home/pi/calzone/app/static/",
+)

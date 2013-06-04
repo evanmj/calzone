@@ -61,3 +61,28 @@ http://127.0.0.1:5000/
 
 #you'll want to deply it to a real web server when finished, and set alarmlogic.py to start on system boot.
 #(more on those as I get time (TODO)
+
+#to deploy with lighttpd:
+sudo apt-get install lighttpd
+add "mod_fastcgi" to server.modules section of /etc/lighttpd/lighttpd.conf
+append lighttpd.conf to your /etc/lighttpd/lighttpd.conf and make changes as needed.
+
+#create group 'web' (or something like it
+groupadd web
+
+edit /etc/group and add "pi,www-data" to the web group you created.
+chmod g+w /home/pi/calzone
+chmod 777 /home/pi/calzone/tmp
+
+#to test permissions, run:
+sudo su www-data
+cd /home/pi/calzone
+./run_flask.py
+
+It should start the server without errors.
+
+#restart lighttpd:
+sudo service restart lighttpd
+
+#test from browser:
+http://<ip>:5000/calzone
