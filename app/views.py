@@ -150,11 +150,11 @@ def history(page = 1):
 def clearhistory():
     #TODO: There is a better way to do this I'm sure.
     #TODO: Add Confirmation popup or something.  Also, this should go on the admin page.
-    HISTORY = models.History.query.order_by("timestamp desc")  #pull history data from database
-    for histdata in HISTORY:
-        db.session.delete(histdata)
+    REMHIST = models.History.query.all()  #pull history data from database
+    for delhist in REMHIST:
+        db.session.delete(delhist)
     db.session.commit()
-    return render_template('history.html',history = HISTORY)  #pass history to history template
+    return redirect(url_for('history'))
     
 
 #define zones route
