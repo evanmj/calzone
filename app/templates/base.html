@@ -21,7 +21,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-            <a class="brand" href="{{ url_for('/index') }}">calzone</a>
+            <a class="brand" href="{{ url_for('index') }}">calzone</a>
             <ul class="nav">
               {% if g.user.is_authenticated() %}
               <li><a href="{{ url_for('zones') }}">Zones</a></li>
