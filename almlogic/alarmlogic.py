@@ -150,7 +150,7 @@ def Run():
     ZONES_LastLoop = {}
     ZonesChanged = False
     ZoneStateStored_Armed = False
-    SoundEnabled = False  
+    SoundEnabled = True
 
     #pull Zone information from DB, which creates a ZONES 'cursor' (like a Dict)
     ZONES = db.session.query(models.Zones).all()

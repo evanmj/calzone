@@ -39,13 +39,13 @@ class Zones(db.Model):
 class AlarmStatus(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     attribute = db.Column(db.String(64), unique = True)
-    value = db.Column(db.String(64), unique = True)
+    value = db.Column(db.String(64))
 
 #settings table, written by web app, read by others... 
 class Settings(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     attribute = db.Column(db.String(64), unique = True)
-    value = db.Column(db.String(64), unique = True)
+    value = db.Column(db.String(64))
 
 #class UserList(db.Model):
 #TODO: User list here for email list, txt list, etc.
