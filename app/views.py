@@ -50,8 +50,15 @@ def before_request():
     g.user = current_user  #copy flask global into the g. global object
     #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
     if CheckProcessRunning('alarmlogic.py') == False:
-        return "placeholder for error screen about not having almlogic.py running in background" 
-  
+        #check request url to avoid redirect loop (rightmost 10 chars)
+        if request.url[-10:] <> url_for('notrunning')[-10:]:
+            return redirect(url_for('notrunning'))
+    else:
+        #user refreshed after starting app
+        if request.url[-10:] == url_for('notrunning')[-10:]:
+            return redirect(url_for('index'))
+
+
 #handle 404 nicely
 @app.errorhandler(404)
 def internal_error(error):
@@ -78,6 +85,12 @@ def index():
     flash('All Zones Okay') #TODO: add if statement for one or more zones not ready to arm
     return render_template('index.html',
         title = 'Overview', ArmedStatus = ArmedStatus)
+
+#almlogic.py not running
+@app.route('/notrunning')
+def notrunning():
+    return render_template('notrunning.html',title = 'Doh. ')
+
 
 #arm the system
 @app.route('/arm')
@@ -157,7 +170,7 @@ def logout():
 def history(page = 1):
     #pull paginated history from db... paginate(page,items per page,empty list on error)
     HISTORY = models.History.query.order_by("timestamp desc").paginate(page, NOTICES_PER_PAGE, False)
-    return render_template('history.html',history = HISTORY,curr_page = page)  #pass history to history template
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
   
 @app.route('/clearhistory')
 @login_required
@@ -176,5 +189,5 @@ def clearhistory():
 @login_required
 def zones():
     ZONES = models.Zones.query.all()   #pull zones list from DB
-    return render_template('zones.html',zones = ZONES) #pass ZONE information to zones template
+    return render_template('zones.html',title = 'Zones',zones = ZONES) #pass ZONE information to zones template
 

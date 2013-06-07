@@ -1,0 +1,17 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h4 class="text-info">Error:</h4>
+
+{% include 'flash.html' %}
+
+  <div class="form-actions">
+    <div class=span9>
+      Alarm Logic Program (almlogic.py) is not running.  Start it at boot using ./run_alarmlogic.py
+      <br>
+      See the <a href = "https://github.com/evanmj/calzone/wiki">calzone</a> wiki for more information about this system.
+    </div>
+  </div>
+
+{% endblock %}
