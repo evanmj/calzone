@@ -1,6 +1,6 @@
 from hashlib import md5
-from almlogic import alarmlogic
 from almlogic import db
+import alarmlogic
 from datetime import datetime
 
 ROLE_USER = 0

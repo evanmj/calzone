@@ -6,5 +6,4 @@ almlogic = Flask(__name__)
 almlogic.config.from_object('config')
 db = SQLAlchemy(almlogic)
 
-from app import models
 
