@@ -48,10 +48,13 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user  #copy flask global into the g. global object
+
+    print 'path=    ' + request.path[:7]
+    #TODO:  This is broken.  even static content is passed and redirected here, which is bad.
     #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
     if CheckProcessRunning('alarmlogic.py') == False:
         #check request url to avoid redirect loop (rightmost 10 chars)
-        if request.url[-10:] <> url_for('notrunning')[-10:]:
+        if request.path <> url_for('notrunning') and request.path[:7] <> '/static' and request.path[:8] <> '/favicon':
             return redirect(url_for('notrunning'))
     else:
         #user refreshed after starting app
@@ -89,6 +92,7 @@ def index():
 #almlogic.py not running
 @app.route('/notrunning')
 def notrunning():
+    #TODO: Allow user to (re)start almlogic.py if logged in?
     return render_template('notrunning.html',title = 'Doh. ')
 
 
