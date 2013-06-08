@@ -30,8 +30,11 @@
             </ul>
           {% if g.user.is_authenticated() %}
             <div class="nav-collapse collapse">
-              <ul class="nav">	      
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <ul class="nav">
+                {% if g.user.role == 1 %}
+                  <li><a href="{{ url_for('index') }}">Admin</a></li>
+                {% endif %}
+                  <li><a href="{{ url_for('logout') }}">Logout</a></li>
               </ul>
             </div>
           {% endif %}

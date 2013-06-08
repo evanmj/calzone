@@ -19,6 +19,12 @@ class User(db.Model):
     def is_active(self):
         return True
 
+    def is_admin(self):
+        if self.role == ROLE_ADMIN:
+            return True
+        else:
+            return False
+
     def is_anonymous(self):
         return False
 

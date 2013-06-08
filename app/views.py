@@ -23,7 +23,7 @@ from emails import alarm_notification
 from config import NOTICES_PER_PAGE
 
 #Get variables from config file
-from config import VALID_USERS
+from config import VALID_USERS, ADMINS
 
 #globals
 SystemArmed = False
@@ -49,7 +49,8 @@ def load_user(id):
 def before_request():
     g.user = current_user  #copy flask global into the g. global object
 
-    print 'path=    ' + request.path[:7]
+    if g.user.is_authenticated():
+        print 'role=    ' + str(g.user.role)
     #TODO:  This is broken.  even static content is passed and redirected here, which is bad.
     #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
     if CheckProcessRunning('alarmlogic.py') == False:
@@ -98,6 +99,7 @@ def notrunning():
 
 #arm the system
 @app.route('/arm')
+@login_required
 def arm():
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()    
     armed.value = '1'
@@ -111,6 +113,7 @@ def arm():
 
 #disarm the system
 @app.route('/disarm')
+@login_required
 def disarm():
     #disarm the system (almlogic.py program handles that)
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()
@@ -153,6 +156,12 @@ def after_login(resp):
         user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
         db.session.add(user)
         db.session.commit()
+    #handle admins
+    if user.email in ADMINS:
+        user.role = ROLE_ADMIN
+        db.session.add(user)
+        db.session.commit()
+
     remember_me = False
     if 'remember_me' in session:  #do we want to remember this user?
         remember_me = session['remember_me']  #copy value from session
