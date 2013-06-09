@@ -204,3 +204,11 @@ def zones():
     ZONES = models.Zones.query.all()   #pull zones list from DB
     return render_template('zones.html',title = 'Zones',zones = ZONES) #pass ZONE information to zones template
 
+#admin views
+@app.route('/zoneconfig')
+@app.route('/usersetup')
+@app.route('/options')
+@login_required
+def unfinished():
+    flash('This function is not yet implemented.')
+    return redirect(url_for('index'))
