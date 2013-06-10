@@ -1,0 +1,1 @@
+killall /home/pi/calzone/flask/bin/python

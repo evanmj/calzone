@@ -5,6 +5,10 @@ from datetime import datetime
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
+#let jinja see these for tempating
+app.jinja_env.globals['ROLE_USER'] = 0
+app.jinja_env.globals['ROLE_ADMIN'] = 1
+
 
 #users, used for login handling
 class User(db.Model):
