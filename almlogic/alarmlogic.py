@@ -166,7 +166,9 @@ def Run():
 
     while True:
         #clear debug screen
-        os.system('clear')
+#        os.system('clear')
+
+        db.session.commit()
 
         #See if we are armed or not from the db (which gets its information from the web interface(flask))
         Armed = db.session.query(models.AlarmStatus).filter_by(attribute = "Armed").first()
@@ -236,4 +238,4 @@ def Run():
 
 
         #nap for one cycle
-        time.sleep(1)
+        time.sleep(3)

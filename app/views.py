@@ -3,13 +3,15 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 #app stuff
-from app import app, db, lm, oid, models
+from app import app, db, lm, oid, models, admin
+from flask.ext.admin.contrib.sqlamodel import ModelView
+from flask.ext.admin import Admin, BaseView, expose
 
 #import forms Flask.wtf
 from forms import LoginForm
 
 #import database models for FlaskAlchemy
-from models import User, History, AlarmStatus, ROLE_USER, ROLE_ADMIN
+from models import User, Zones, History, AlarmStatus, ROLE_USER, ROLE_ADMIN
 
 #import python exensions
 from datetime import datetime
@@ -51,16 +53,16 @@ def before_request():
 
     if g.user.is_authenticated():
         print 'role=    ' + str(g.user.role)
-    #TODO:  This is broken.  even static content is passed and redirected here, which is bad.
+    #TODO: only check the proess if contnet is not static content... i e they want to go to a page that needs almlogic.
     #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
-    if CheckProcessRunning('alarmlogic.py') == False:
+#    if CheckProcessRunning('alarmlogic.py') == False:
         #check request url to avoid redirect loop (rightmost 10 chars)
-        if request.path <> url_for('notrunning') and request.path[:7] <> '/static' and request.path[:8] <> '/favicon':
-            return redirect(url_for('notrunning'))
-    else:
+#        if request.path <> url_for('notrunning') and request.path[:7] <> '/static' and request.path[:8] <> '/favicon':
+#            return redirect(url_for('notrunning'))
+#    else:
         #user refreshed after starting app
-        if request.url[-10:] == url_for('notrunning')[-10:]:
-            return redirect(url_for('index'))
+#        if request.url[-10:] == url_for('notrunning')[-10:]:
+#            return redirect(url_for('index'))
 
 
 #handle 404 nicely
@@ -212,3 +214,15 @@ def zones():
 def unfinished():
     flash('This function is not yet implemented.')
     return redirect(url_for('index'))
+
+#flask-Admin Section
+#class MyView(BaseView):
+#    @expose('/')
+#    def index(self):
+#        return self.render('index.html')
+
+#    def is_accessible(self):
+#        return g.user.role #ROLE_ADMIN == 1, user = 0
+
+#admin.add_view(ModelView(User, db.session, endpoint='useradmin'))
+#admin.add_view(ModelView(Zones, db.session, endpoint='zoneadmin'))

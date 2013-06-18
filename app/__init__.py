@@ -4,6 +4,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 from flask.ext.mail import Mail
+from flask.ext.admin import Admin, BaseView, expose
+from flask.ext.admin.contrib.sqlamodel import ModelView
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
 from momentjs import momentjs
 
@@ -15,6 +17,8 @@ lm.init_app(app)
 lm.login_view = 'login'
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
+admin = Admin(app)#todo: can maybe use my base template here? not in admin folder
+
 
 if not app.debug:
     import logging
