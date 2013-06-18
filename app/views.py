@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 #app stuff
 from app import app, db, lm, oid, models, admin
 from flask.ext.admin.contrib.sqlamodel import ModelView
-from flask.ext.admin import Admin, BaseView, expose
+from flask.ext.admin.base import MenuLink, Admin, BaseView, expose
 
 #import forms Flask.wtf
 from forms import LoginForm
@@ -196,6 +196,7 @@ def clearhistory():
     for delhist in REMHIST:
         db.session.delete(delhist)
     db.session.commit()
+    flash('History Cleared by User.')
     return redirect(url_for('history'))
     
 
@@ -206,23 +207,14 @@ def zones():
     ZONES = models.Zones.query.all()   #pull zones list from DB
     return render_template('zones.html',title = 'Zones',zones = ZONES) #pass ZONE information to zones template
 
-#admin views
-@app.route('/zoneconfig')
-@app.route('/usersetup')
-@app.route('/options')
-@login_required
-def unfinished():
-    flash('This function is not yet implemented.')
-    return redirect(url_for('index'))
-
 #flask-Admin Section
 
 #define custom flask-Admin view
 class UserView(ModelView):
     # Disable model creation
     can_create = False
-    can_edit = False
-    can_delete = False
+    can_edit = True
+    can_delete = True
 
     def __init__(self, session, **kwargs):
         # You can pass name and other parameters if you want to
@@ -247,7 +239,8 @@ class ZoneView(ModelView):
             return 0
 
 
-#add views
+#add flask admin views
 admin.add_view(UserView(db.session))
 admin.add_view(ZoneView(db.session))
-
+admin.add_link(MenuLink(name='Clear History', url='/clearhistory'))
+admin.add_link(MenuLink(name='Exit Admin', url='/'))

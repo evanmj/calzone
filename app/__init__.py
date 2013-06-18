@@ -17,7 +17,7 @@ lm.init_app(app)
 lm.login_view = 'login'
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
-admin = Admin(app)#todo: can maybe use my base template here? not in admin folder
+admin = Admin(app, 'calzone Admin')#todo: can maybe use my base template here? not in admin folder
 
 
 if not app.debug:

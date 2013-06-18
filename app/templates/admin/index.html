@@ -1,4 +1,14 @@
 {% extends 'admin/master.html' %}
-blah
 {% block body %}
+<h4 class="text-info">calzone Administrative Interface</h4>
+ <div class="form-actions">
+    <div class=span9>
+      This administrative interface is granted to any user with admin role.  The first valid user to log on to the system is automatically set to the administrator.  Others can be added as needed in the User table.<BR><BR>
+      This interface will allow for chaning user roles, selecting zone names and hardware IO pins, change settings, etc.<BR><BR>
+      Use the menus at the top to set up the system.<BR><BR>
+      Note: Don't delete the only admin user or you can lock yourself out.
+
+
+    </div>
+ </div>
 {% endblock %}
