@@ -164,78 +164,80 @@ def Run():
     for zone in ZONES:
         ZONES_LastLoop[zone.name] = zone.secured #store zone state
 
-    while True:
-        #clear debug screen
-#        os.system('clear')
+    try:
+        while True:
+            #clear debug screen
+            os.system('clear')
 
-        db.session.commit()
+            #See if we are armed or not from the db (which gets its information from the web interface(flask))
+            Armed = db.session.query(models.AlarmStatus).filter_by(attribute = "Armed").first()
+            print Armed.attribute + ' ' + Armed.value
 
-        #See if we are armed or not from the db (which gets its information from the web interface(flask))
-        Armed = db.session.query(models.AlarmStatus).filter_by(attribute = "Armed").first()
-        print Armed.attribute + ' ' + Armed.value
+            #get fresh zone data from hardware... 
+            ZONES = hw.UpdateZones(ZONES)
 
-        #get fresh zone data from hardware... 
-        ZONES = hw.UpdateZones(ZONES)
+            #debug output on screen of zones (justified left with padding)
+            for zone in ZONES:
+                print zone.name.ljust(20) + str(zone.secured)
 
-        #debug output on screen of zones (justified left with padding)
-        for zone in ZONES:
-            print zone.name.ljust(20) + str(zone.secured)
-
-        if Armed.value == '1' and not Alarming:  
-            print 'main armed loop running'
-            #see if zones changed since last loop.... 
-            if ZonesChanged:                
-                #Note: the system stays armed even if alarming, until a user disarms.
-                print 'System Armed: Ahhh! zone changed state while Armed!.'
-                ZoneStateStored_Armed = False
-                Alarming = True
-                #timestamp zone change
-                now = datetime.now()
-                #write history database
-                z = models.History(source = zone.name, event = 'Alarming!', timestamp = now)
-                db.session.add(z) 
-                #write the db data which should include the changes in the ZONES cursor
-                db.session.commit() 
-                #start sounding alarm
-                if SoundEnabled:
-                    StartAlarmSound('alarm_missle_launch.wav')
-            else:
-                print 'no change in zones.'
-        elif Armed.value == '0':                            #not armed
-            print 'System Disarmed'
-
-
-        #system is in alarm state, probably siren is sounding, user has not acknowledged it yet.
-        if Alarming and Armed.value == '1':
-            print 'System is Alarming!!!!'
-            #more will go here.
-
-        #system is alarming, but user has just acknowledged it by a disarm request via the web, timeout s$
-        if Alarming and Armed.value == '0':
-            Alarming = False
-            StopAlarmSound()
+            if Armed.value == '1' and not Alarming:  
+                print 'main armed loop running'
+                #see if zones changed since last loop.... 
+                if ZonesChanged:                
+                    #Note: the system stays armed even if alarming, until a user disarms.
+                    print 'System Armed: Ahhh! zone changed state while Armed!.'
+                    ZoneStateStored_Armed = False
+                    Alarming = True
+                    #timestamp zone change
+                    now = datetime.now()
+                    #write history database
+                    z = models.History(source = zone.name, event = 'Alarming!', timestamp = now)
+                    db.session.add(z) 
+                    #write the db data which should include the changes in the ZONES cursor
+                    db.session.commit() 
+                    #start sounding alarm
+                    if SoundEnabled:
+                        StartAlarmSound('alarm_missle_launch.wav')
+                else:
+                    print 'no change in zones.'
+            elif Armed.value == '0':                            #not armed
+                print 'System Disarmed'
 
 
-        #find out if zones changed, and log changes to the db.
-        ZonesChanged = CheckForZoneChange(ZONES_LastLoop, ZONES)
+            #system is in alarm state, probably siren is sounding, user has not acknowledged it yet.
+            if Alarming and Armed.value == '1':
+                print 'System is Alarming!!!!'
+                #more will go here.
 
-        #store zone copy for next loop
-        for zone in ZONES:
-            ZONES_LastLoop[zone.name] = zone.secured #store zone state
-        
-
-        # AllZonesSecured is just for a notice on the web that says all doors/windows/zones are secured.
-        # Note, you can arm the system with one or more zones unsecured, but it should warn you, etc.
-        #      This is needed because I have a screen dog door and I'd like to be able to leave the
-        #      back door open and still arm the system and watch for state change.
-
-        # TODO:  ths can be done in a single db query instead.  Also currently Unused.
-        AllZonesSecured = True # set this, so if any are not, we will unset it$
-        for zone in ZONES:
-        # determine zone secured bit.
-            if not zone.secured:
-                AllZonesSecured = False
+            #system is alarming, but user has just acknowledged it by a disarm request via the web, timeout s$
+            if Alarming and Armed.value == '0':
+                Alarming = False
+                StopAlarmSound()
 
 
-        #nap for one cycle
-        time.sleep(3)
+            #find out if zones changed, and log changes to the db.
+            ZonesChanged = CheckForZoneChange(ZONES_LastLoop, ZONES)
+
+            #store zone copy for next loop
+            for zone in ZONES:
+                ZONES_LastLoop[zone.name] = zone.secured #store zone state
+            
+
+            # AllZonesSecured is just for a notice on the web that says all doors/windows/zones are secured.
+            # Note, you can arm the system with one or more zones unsecured, but it should warn you, etc.
+            #      This is needed because I have a screen dog door and I'd like to be able to leave the
+            #      back door open and still arm the system and watch for state change.
+
+            # TODO:  ths can be done in a single db query instead.  Also currently Unused.
+            AllZonesSecured = True # set this, so if any are not, we will unset it$
+            for zone in ZONES:
+            # determine zone secured bit.
+                if not zone.secured:
+                    AllZonesSecured = False
+
+
+            #nap for one cycle
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    return 0
