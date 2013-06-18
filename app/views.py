@@ -216,13 +216,32 @@ def unfinished():
     return redirect(url_for('index'))
 
 #flask-Admin Section
-#class MyView(BaseView):
-#    @expose('/')
-#    def index(self):
-#        return self.render('index.html')
 
-#    def is_accessible(self):
-#        return g.user.role #ROLE_ADMIN == 1, user = 0
+#define custom flask-Admin view
+class UserView(ModelView):
+    # Disable model creation
+    can_create = False
+    can_edit = False
+    can_delete = False
 
-#admin.add_view(ModelView(User, db.session, endpoint='useradmin'))
-#admin.add_view(ModelView(Zones, db.session, endpoint='zoneadmin'))
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(UserView, self).__init__(User, session, **kwargs)
+
+    def is_accessible(self):
+        return g.user.role #ROLE_ADMIN == 1, user = 0
+
+class ZoneView(ModelView):
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(ZoneView, self).__init__(Zones, session, **kwargs)
+
+    def is_accessible(self):
+        return g.user.role #ROLE_ADMIN == 1, user = 0
+
+
+#add views
+admin.add_view(UserView(db.session))
+admin.add_view(ZoneView(db.session))
+

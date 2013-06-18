@@ -239,5 +239,5 @@ def Run():
             #nap for one cycle
             time.sleep(1)
     except KeyboardInterrupt:
-        pass
+        pygame.mixer.quit()
     return 0
