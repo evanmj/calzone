@@ -229,7 +229,10 @@ class UserView(ModelView):
         super(UserView, self).__init__(User, session, **kwargs)
 
     def is_accessible(self):
-        return g.user.role #ROLE_ADMIN == 1, user = 0
+        if g.user.is_authenticated():
+            return g.user.role #ROLE_ADMIN == 1, user = 0
+        else:  #anonymous user
+            return 0
 
 class ZoneView(ModelView):
 
@@ -238,7 +241,10 @@ class ZoneView(ModelView):
         super(ZoneView, self).__init__(Zones, session, **kwargs)
 
     def is_accessible(self):
-        return g.user.role #ROLE_ADMIN == 1, user = 0
+        if g.user.is_authenticated():
+            return g.user.role #ROLE_ADMIN == 1, user = 0
+        else:  #anonymous user
+            return 0
 
 
 #add views
