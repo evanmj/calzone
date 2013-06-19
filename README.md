@@ -5,7 +5,7 @@ calzone
 calzone - A free, web enabled home alarm system for the raspberry pi, etc.
 
 See the wiki on github for more up to date information:
-https://github.com/evanmj/pisecurity/wiki
+https://github.com/evanmj/calzone/wiki
 
 This program enables a web interface on the raspberry pi using flask for python and WSGI.
 
