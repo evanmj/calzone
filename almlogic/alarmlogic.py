@@ -211,8 +211,8 @@ def Run():
 
             #system is alarming, but user has just acknowledged it by a disarm request via the web, timeout s$
             if Alarming and Armed.value == '0':
-                Alarming = False
                 StopAlarmSound()
+                Alarming = False
 
 
             #find out if zones changed, and log changes to the db.
