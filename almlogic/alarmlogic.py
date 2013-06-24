@@ -103,8 +103,8 @@ def StartAlarmSound(soundfile):
     pygame.mixer.music.play(-1)
 
 def StopAlarmSound():
-    pygame.mixer.music.stop()
     print 'Stopping alarm Sound...'
+    pygame.mixer.music.fadeout(1500)
 
 def CheckForZoneChange(ZONES_Copy, ZONES):
     """This function will check zones for change, and logs changes to the DB."""
@@ -169,6 +169,8 @@ def Run():
             #clear debug screen
             os.system('clear')
 
+            db.session.commit()
+
             #See if we are armed or not from the db (which gets its information from the web interface(flask))
             Armed = db.session.query(models.AlarmStatus).filter_by(attribute = "Armed").first()
             print Armed.attribute + ' ' + Armed.value
@@ -212,8 +214,8 @@ def Run():
             #system is alarming, but user has just acknowledged it by a disarm request via the web, timeout s$
             if Alarming and Armed.value == '0':
                 StopAlarmSound()
+                print 'Setting Internal status back to not alarming.'
                 Alarming = False
-
 
             #find out if zones changed, and log changes to the db.
             ZonesChanged = CheckForZoneChange(ZONES_LastLoop, ZONES)
