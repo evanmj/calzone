@@ -34,7 +34,7 @@ from almlogic import models
 from almlogic import db
 
 #get user configured zones
-from config import CONFIGZONES  # TODO: Remove this when zones are defined from the web.
+#from config import CONFIGZONES  # TODO: Remove this when zones are defined from the web.
 
 #import hardware class from hardware module
 from hardware import hardware  
@@ -55,16 +55,10 @@ def init():
 
     #if ZONES are not yet defined
     if zonecheck is None:
-        #define zones from config.py
-        for zone in CONFIGZONES:
-            u = models.Zones(name=zone['name'], pin=zone['pin'])
-            db.session.add(u)
-            db.session.commit()
-    
-    #TODO: add this back when zones are all moved to web based config
-    #define sample zones
-    #u = models.Zones(name='Sample Zone 1', pin=0)
-    #db.session.add(u)
+        #no zones defined.  Define sample zone in db.
+        u = models.Zones(name='Sample Zone 1', pin=0)
+        db.session.add(u)
+        db.session.commit()
 
     print '--------------'
     print 'Defined Zones:'
@@ -79,14 +73,23 @@ def init():
 
     #Check if AlarmStatus DB Table is populated yet
     alarmstatus = models.AlarmStatus.query.get(1)
-
     if alarmstatus is None:
         # populate initial data elements
         a = models.AlarmStatus(attribute = 'Armed', value = '0')
         db.session.add(a)
 
+    #do we have the settings table populated already?
+    settings_query = models.Settings.query.get(1)
+    if settings_query is None: # no settings defined yet, initialize them here.
+        a = models.Settings(attribute = 'IOupdateRateSec', value = '1', description = 'Update Rate for IO (Zone) Polling in Seconds.')
+        db.session.add(a)
+        a = models.Settings(attribute = 'NoticesPerPage', value = '15', description = 'Number of history items listed per page on the /history page')
+        db.session.add(a)
+        a = models.Settings(attribute = 'AlarmFile', value = 'alarm_missle_launch.wav', description = 'File name of the wave file played for the alarm sound. Any pygame format will work (ogg, wav, etc).' )
+        db.session.add(a)
+
     db.session.commit()  # write to db
-    db.session.close()   # close session?
+    db.session.close()   # close session
 
     #init pygame audio mixer
     pygame.mixer.init()
@@ -144,7 +147,7 @@ def CheckForZoneChange(ZONES_Copy, ZONES):
 def Run():
 
     #locals
-    AllZonesSecured = False
+#    AllZonesSecured = False
     Alarming = False # holds alarming status... if alarming, siren should be sounding, etc.  #TODO: move this to status db
     ZONES_AsArmed = {} # create empty stucture   
     ZONES_LastLoop = {}
@@ -199,7 +202,8 @@ def Run():
                     db.session.commit() 
                     #start sounding alarm
                     if SoundEnabled:
-                        StartAlarmSound('alarm_missle_launch.wav')
+                        soundfile = models.Settings.query.filter_by(attribute = 'AlarmFile').first()
+                        StartAlarmSound(soundfile.value)
                 else:
                     print 'no change in zones.'
             elif Armed.value == '0':                            #not armed
@@ -231,15 +235,16 @@ def Run():
             #      back door open and still arm the system and watch for state change.
 
             # TODO:  ths can be done in a single db query instead.  Also currently Unused.
-            AllZonesSecured = True # set this, so if any are not, we will unset it$
-            for zone in ZONES:
+#            AllZonesSecured = True # set this, so if any are not, we will unset it$
+#            for zone in ZONES:
             # determine zone secured bit.
-                if not zone.secured:
-                    AllZonesSecured = False
-
+#                if not zone.secured:
+#                    AllZonesSecured = False
 
             #nap for one cycle
-            time.sleep(1)
+            naptime = models.Settings.query.filter_by(attribute = 'IOupdateRateSec').first()
+            time.sleep(float(naptime.value))
+
     except KeyboardInterrupt:
         pygame.mixer.quit()
     return 0

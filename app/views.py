@@ -11,7 +11,8 @@ from flask.ext.admin.base import MenuLink, Admin, BaseView, expose
 from forms import LoginForm
 
 #import database models for FlaskAlchemy
-from models import User, Zones, History, AlarmStatus, ROLE_USER, ROLE_ADMIN
+from models import User, Zones, History, AlarmStatus, ValidUsers, Settings, Email
+from models import ROLE_USER, ROLE_ADMIN
 
 #import python exensions
 from datetime import datetime
@@ -22,10 +23,10 @@ import subprocess
 from emails import alarm_notification
 
 #Config zone history
-from config import NOTICES_PER_PAGE
+#from config import NOTICES_PER_PAGE
 
 #Get variables from config file
-from config import VALID_USERS, ADMINS
+#from config import VALID_USERS, ADMINS
 
 #globals
 SystemArmed = False
@@ -51,8 +52,6 @@ def load_user(id):
 def before_request():
     g.user = current_user  #copy flask global into the g. global object
 
-    if g.user.is_authenticated():
-        print 'role=    ' + str(g.user.role)
     #TODO: only check the proess if contnet is not static content... i e they want to go to a page that needs almlogic.
     #note: this might slow down the UI!  maybe just check on login page?  we would like to know if the process crashes though...
 #    if CheckProcessRunning('alarmlogic.py') == False:
@@ -83,12 +82,20 @@ def internal_error(error):
 @app.route('/index', methods = ['GET', 'POST'])
 @login_required
 def index():
+    #get armed status from database.
     armed = AlarmStatus.query.filter_by(attribute = 'Armed').first()    
     if armed.value == '1':
 	ArmedStatus = True
     else:
         ArmedStatus = False
-    flash('All Zones Okay') #TODO: add if statement for one or more zones not ready to arm
+
+    #notify user if a zone is not secured (but don't keep them from arming with that status)
+    zonesbreached = Zones.query.filter_by(secured = 0).first()
+    if zonesbreached is None:
+        flash('All Zones Secured') 
+    else:
+        flash('One or more Zones Breached') 
+    
     return render_template('index.html',
         title = 'Overview', ArmedStatus = ArmedStatus)
 
@@ -146,23 +153,29 @@ def login():
 
 @oid.after_login
 def after_login(resp):
-	# Is the email returned from OpenID valid, and is the user allowed on the system? (config.py)
-    if resp.email is None or resp.email == "" or resp.email not in VALID_USERS:  
-        flash('Invalid login. You have not been granted access to this system.')
-        return redirect(url_for('login'))
+
+    #do we have valid users yet?
     user = User.query.filter_by(email = resp.email).first()  #find user in db
-    if user is None:    #if not found... 
+    if user is None:    #if not found... this is the first user to log in.  Make them admin for easy setup
         nickname = resp.nickname
         if nickname is None or nickname == "":  #build nickname if null
             nickname = resp.email.split('@')[0]
-        user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
+        user = User(nickname = nickname, email = resp.email, role = ROLE_ADMIN)
         db.session.add(user)
         db.session.commit()
-    #handle admins
-    if user.email in ADMINS:
-        user.role = ROLE_ADMIN
-        db.session.add(user)
+    # Is the email returned from OpenID valid, and is the user allowed on the system? 
+    # query for this user
+    Valid_Users = ValidUsers.query.filter_by(email = resp.email).first()
+    #do we have any valid users yet?
+    if Valid_Users is None:
+        #no valid users, this is the admin logging in the first time.
+        u = ValidUsers(email = resp.email)
+        db.session.add(u)
         db.session.commit()
+    #some valid users exist, do we have this user in our db?
+    elif resp.email is None or resp.email == "" or resp.email not in Valid_Users.email:  
+        flash('Invalid login. You have not been granted access to this system.')
+        return redirect(url_for('login'))
 
     remember_me = False
     if 'remember_me' in session:  #do we want to remember this user?
@@ -184,7 +197,8 @@ def logout():
 @login_required
 def history(page = 1):
     #pull paginated history from db... paginate(page,items per page,empty list on error)
-    HISTORY = models.History.query.order_by("timestamp desc").paginate(page, NOTICES_PER_PAGE, False)
+    NumNotices = models.Settings.query.filter_by(attribute = 'NoticesPerPage').first()
+    HISTORY = models.History.query.order_by("timestamp desc").paginate(page, int(NumNotices.value), False)
     return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
   
 @app.route('/clearhistory')
@@ -207,7 +221,9 @@ def zones():
     ZONES = models.Zones.query.all()   #pull zones list from DB
     return render_template('zones.html',title = 'Zones',zones = ZONES) #pass ZONE information to zones template
 
+#===================
 #flask-Admin Section
+#===================
 
 #define custom flask-Admin view
 class UserView(ModelView):
@@ -238,9 +254,47 @@ class ZoneView(ModelView):
         else:  #anonymous user
             return 0
 
+class ValidUsersView(ModelView):
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(ValidUsersView, self).__init__(ValidUsers, session, **kwargs)
+
+    def is_accessible(self):
+        if g.user.is_authenticated():
+            return g.user.role #ROLE_ADMIN == 1, user = 0
+        else:  #anonymous user
+            return 0
+
+class SettingsView(ModelView):
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(SettingsView, self).__init__(Settings, session, **kwargs)
+
+    def is_accessible(self):
+        if g.user.is_authenticated():
+            return g.user.role #ROLE_ADMIN == 1, user = 0
+        else:  #anonymous user
+            return 0
+
+class EmailView(ModelView):
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(EmailView, self).__init__(Email, session, **kwargs)
+
+    def is_accessible(self):
+        if g.user.is_authenticated():
+            return g.user.role #ROLE_ADMIN == 1, user = 0
+        else:  #anonymous user
+            return 0
 
 #add flask admin views
 admin.add_view(UserView(db.session))
 admin.add_view(ZoneView(db.session))
+admin.add_view(ValidUsersView(db.session))
+admin.add_view(SettingsView(db.session))
+admin.add_view(EmailView(db.session))
 admin.add_link(MenuLink(name='Clear History', url='/clearhistory'))
 admin.add_link(MenuLink(name='Exit Admin', url='/'))

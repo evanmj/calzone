@@ -46,28 +46,10 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     attribute = db.Column(db.String(64), unique = True)
     value = db.Column(db.String(64))
-
-#class UserList(db.Model):
-#TODO: User list here for email list, txt list, etc.
+    description = db.Column(db.String(128))
 
 class History(db.Model):
     id = db.Column(db.Integer, primary_key = True)      #pk
     source = db.Column(db.String(64))                   #source of entry... user, or zone that caused change
     event = db.Column(db.String(64))                    #type of event, arm, disarm, open, close, etc....
     timestamp = db.Column(db.DateTime)
-
-
-#ideas for other tables...
-
-# we will need an outputs table to trigger outputs.
-# settings table should be populated initially with some obvious settings.  
-# the goal would be to ditch user settings in config.py.
-# once settings is populated, no need to re-populate, assume user has changed things. 
-#
-# a configurable database for email notices, with types mask... alarm notices, etc.
-#
-# config page will show for admins that allows changing of all the db settings, zones, pins, etc.
-#
-# also need a place for status, like global armed bit, and arm request bits, and whatnot.
-# maybe for speed, an 'arm allowed' and 'arm inplace allowed' set of bits so flasks knows the answer already.
-#
