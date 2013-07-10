@@ -92,9 +92,9 @@ def index():
     #notify user if a zone is not secured (but don't keep them from arming with that status)
     zonesbreached = Zones.query.filter_by(secured = 0).first()
     if zonesbreached is None:
-        flash('All Zones Secured') 
+        flash('All zones secured.') 
     else:
-        flash('One or more Zones Breached') 
+        flash('One or more zones not secured.') 
     
     return render_template('index.html',
         title = 'Overview', ArmedStatus = ArmedStatus)
