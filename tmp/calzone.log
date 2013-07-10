@@ -1,40 +1,46 @@
-2013-07-09 03:13:07,070 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:14:24,651 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:16:23,548 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:16:43,817 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:16:51,865 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:19:54,747 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:20:02,642 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:25:04,756 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:25:12,643 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:30:58,275 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:31:04,564 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:39:50,057 INFO: calzonee startup [in app/__init__.py:41]
-2013-07-09 03:41:08,136 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:41:14,417 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:44:23,134 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:44:29,484 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:48:27,168 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:48:33,405 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:52:26,873 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:52:33,046 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:57:17,937 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:57:32,121 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:57:42,304 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:59:03,544 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 03:59:55,795 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:07:21,933 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:07:30,555 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:10:17,654 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:13:13,590 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:16:38,508 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:17:18,133 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:17:26,386 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:24:28,430 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:24:39,218 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:41]
-2013-07-09 04:31:52,115 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:45]
-2013-07-09 04:31:58,727 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:45]
-2013-07-09 04:32:19,183 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:45]
-2013-07-09 04:40:38,284 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
-2013-07-09 04:40:54,489 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
-2013-07-09 04:41:02,763 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
+2013-07-10 01:21:01,982 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
+2013-07-10 01:21:29,784 ERROR: Exception on /arm [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+Traceback (most recent call last):
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+    return fn(*args, **kwargs)
+  File "/home/pi/calzone/app/views.py", line 119, in arm
+    db.session.commit()  #write data
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 114, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 703, in commit
+    self.transaction.commit()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 361, in commit
+    self._prepare_impl()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 340, in _prepare_impl
+    self.session.flush()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1718, in flush
+    self._flush(objects)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1789, in _flush
+    flush_context.execute()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/unitofwork.py", line 331, in execute
+    rec.execute(self)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/unitofwork.py", line 475, in execute
+    uow
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/persistence.py", line 64, in save_obj
+    table, insert)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/persistence.py", line 558, in _emit_insert_statements
+    execute(statement, params)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1449, in execute
+    params)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1584, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1698, in _execute_context
+    context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1691, in _execute_context
+    context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 331, in do_execute
+    cursor.execute(statement, parameters)
+OperationalError: (OperationalError) attempt to write a readonly database u'INSERT INTO history (source, event, timestamp) VALUES (?, ?, ?)' (u'evanmj', 'Armed By User', '2013-07-10 01:21:29.754837')

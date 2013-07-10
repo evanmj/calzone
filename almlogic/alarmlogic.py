@@ -88,24 +88,24 @@ def init():
         a = models.Settings(attribute = 'AlarmFile', value = 'alarm_missle_launch.wav', description = 'File name of the wave file played for the alarm sound. Any pygame format will work (ogg, wav, etc).' )
         db.session.add(a)
 
-    db.session.commit()  # write to db
-    db.session.close()   # close session
+    #write to the DB, close session
+    db.session.commit() 
+    db.session.close()  
 
     #init pygame audio mixer
     pygame.mixer.init()
 
-
-def UpdateSettings():   #pulls settings from database
-
-    pass  #todo
+    #wait for a bit so the user can see the defined zones
+    time.sleep(2) 
 
 def StartAlarmSound(soundfile):
-    """This funcion will start the alarm wav file provided"""
+    """This function will start the alarm wav file provided"""
     pygame.mixer.music.load(soundfile)
     #play sound, loop forever
     pygame.mixer.music.play(-1)
 
 def StopAlarmSound():
+    """This function will stop (fade out) the alarm wav file provided"""
     print 'Stopping alarm Sound...'
     pygame.mixer.music.fadeout(1500)
 
@@ -130,7 +130,7 @@ def CheckForZoneChange(ZONES_Copy, ZONES):
                 z = models.History(source = zone.name, event = 'Zone Breached', timestamp = now)
                 db.session.add(z)
             else:
-                pass #log change from unsecured to secured here
+                #log change from unsecured to secured here
                 now = datetime.now()
                 z = models.History(source = zone.name, event = 'Zone Secured', timestamp = now)
                 db.session.add(z)
@@ -147,7 +147,6 @@ def CheckForZoneChange(ZONES_Copy, ZONES):
 def Run():
 
     #locals
-#    AllZonesSecured = False
     Alarming = False # holds alarming status... if alarming, siren should be sounding, etc.  #TODO: move this to status db
     ZONES_AsArmed = {} # create empty stucture   
     ZONES_LastLoop = {}
@@ -176,14 +175,14 @@ def Run():
 
             #See if we are armed or not from the db (which gets its information from the web interface(flask))
             Armed = db.session.query(models.AlarmStatus).filter_by(attribute = "Armed").first()
-            print Armed.attribute + ' ' + Armed.value
 
             #get fresh zone data from hardware... 
             ZONES = hw.UpdateZones(ZONES)
 
             #debug output on screen of zones (justified left with padding)
             for zone in ZONES:
-                print zone.name.ljust(20) + str(zone.secured)
+                print zone.name.ljust(30) + str(zone.secured)
+            print ' ' 
 
             if Armed.value == '1' and not Alarming:  
                 print 'main armed loop running'
@@ -209,7 +208,6 @@ def Run():
             elif Armed.value == '0':                            #not armed
                 print 'System Disarmed'
 
-
             #system is in alarm state, probably siren is sounding, user has not acknowledged it yet.
             if Alarming and Armed.value == '1':
                 print 'System is Alarming!!!!'
@@ -227,21 +225,7 @@ def Run():
             #store zone copy for next loop
             for zone in ZONES:
                 ZONES_LastLoop[zone.name] = zone.secured #store zone state
-            
 
-            # AllZonesSecured is just for a notice on the web that says all doors/windows/zones are secured.
-            # Note, you can arm the system with one or more zones unsecured, but it should warn you, etc.
-            #      This is needed because I have a screen dog door and I'd like to be able to leave the
-            #      back door open and still arm the system and watch for state change.
-
-            # TODO:  ths can be done in a single db query instead.  Also currently Unused.
-#            AllZonesSecured = True # set this, so if any are not, we will unset it$
-#            for zone in ZONES:
-            # determine zone secured bit.
-#                if not zone.secured:
-#                    AllZonesSecured = False
-
-            #nap for one cycle
             naptime = models.Settings.query.filter_by(attribute = 'IOupdateRateSec').first()
             time.sleep(float(naptime.value))
 
