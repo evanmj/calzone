@@ -22,12 +22,6 @@ import subprocess
 #import pre-defined emails
 from emails import alarm_notification
 
-#Config zone history
-#from config import NOTICES_PER_PAGE
-
-#Get variables from config file
-#from config import VALID_USERS, ADMINS
-
 #globals
 SystemArmed = False
 

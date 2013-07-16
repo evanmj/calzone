@@ -9,6 +9,7 @@ from flask.ext.admin.contrib.sqlamodel import ModelView
 from config import basedir, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD,DebugEmail
 from momentjs import momentjs
 
+
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
@@ -19,6 +20,7 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
 admin = Admin(app, 'calzone Admin')#todo: can maybe use my base template here? not in admin folder
 
+app.jinja_env.globals['momentjs'] = momentjs
 
 if not app.debug:
     import logging
@@ -40,8 +42,6 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('calzonee startup')
-
-app.jinja_env.globals['momentjs'] = momentjs
 
 from app import views, models
 

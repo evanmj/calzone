@@ -25,11 +25,8 @@
            {% endif %}
 
 	</td>
-	<td>
-	    {{ histdata.timestamp.strftime('%m-%d-%Y') }}
-        </td>
         <td>
-	    {{ histdata.timestamp.strftime('%H:%M:%S') }}
+            {{ momentjs(histdata.timestamp).calendar() }}
         </td>
     </tr>
 

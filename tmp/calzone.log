@@ -1,5 +1,5 @@
-2013-07-10 01:21:01,982 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
-2013-07-10 01:21:29,784 ERROR: Exception on /arm [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+2013-07-16 02:16:25,390 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
+2013-07-16 02:16:29,231 ERROR: Exception on /history [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
 Traceback (most recent call last):
   File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
     response = self.full_dispatch_request()
@@ -11,36 +11,152 @@ Traceback (most recent call last):
     return self.view_functions[rule.endpoint](**req.view_args)
   File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
     return fn(*args, **kwargs)
-  File "/home/pi/calzone/app/views.py", line 119, in arm
-    db.session.commit()  #write data
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 114, in do
-    return getattr(self.registry(), name)(*args, **kwargs)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 703, in commit
-    self.transaction.commit()
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 361, in commit
-    self._prepare_impl()
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 340, in _prepare_impl
-    self.session.flush()
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1718, in flush
-    self._flush(objects)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1789, in _flush
-    flush_context.execute()
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/unitofwork.py", line 331, in execute
-    rec.execute(self)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/unitofwork.py", line 475, in execute
-    uow
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/persistence.py", line 64, in save_obj
-    table, insert)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/orm/persistence.py", line 558, in _emit_insert_statements
-    execute(statement, params)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1449, in execute
-    params)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1584, in _execute_clauseelement
-    compiled_sql, distilled_params
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1698, in _execute_context
-    context)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1691, in _execute_context
-    context)
-  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 331, in do_execute
-    cursor.execute(statement, parameters)
-OperationalError: (OperationalError) attempt to write a readonly database u'INSERT INTO history (source, event, timestamp) VALUES (?, ?, ?)' (u'evanmj', 'Armed By User', '2013-07-10 01:21:29.754837')
+  File "/home/pi/calzone/app/views.py", line 202, in history
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 125, in render_template
+    context, ctx.app)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 107, in _render
+    rv = template.render(context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 969, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 742, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/pi/calzone/app/templates/history.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "/home/pi/calzone/app/templates/base.html", line 45, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/pi/calzone/app/templates/history.html", line 35, in block "content"
+    {% include 'histdata.html' %}
+  File "/home/pi/calzone/app/templates/histdata.html", line 35, in top-level template code
+    {{momentjs(histdata.timestamp).fromNow()}}
+AttributeError: class momentjs has no attribute '__call__'
+2013-07-16 02:16:42,642 ERROR: Exception on /history [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+Traceback (most recent call last):
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+    return fn(*args, **kwargs)
+  File "/home/pi/calzone/app/views.py", line 202, in history
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 125, in render_template
+    context, ctx.app)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 107, in _render
+    rv = template.render(context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 969, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 742, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/pi/calzone/app/templates/history.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "/home/pi/calzone/app/templates/base.html", line 45, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/pi/calzone/app/templates/history.html", line 35, in block "content"
+    {% include 'histdata.html' %}
+  File "/home/pi/calzone/app/templates/histdata.html", line 35, in top-level template code
+    {{momentjs(histdata.timestamp).fromNow()}}
+AttributeError: class momentjs has no attribute '__call__'
+2013-07-16 02:20:39,094 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:42]
+2013-07-16 02:20:47,640 ERROR: Exception on /history [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+Traceback (most recent call last):
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+    return fn(*args, **kwargs)
+  File "/home/pi/calzone/app/views.py", line 196, in history
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 125, in render_template
+    context, ctx.app)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 107, in _render
+    rv = template.render(context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 969, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 742, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/pi/calzone/app/templates/history.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "/home/pi/calzone/app/templates/base.html", line 45, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/pi/calzone/app/templates/history.html", line 35, in block "content"
+    {% include 'histdata.html' %}
+  File "/home/pi/calzone/app/templates/histdata.html", line 35, in top-level template code
+    {{momentjs(histdata.timestamp).fromNow()}}
+AttributeError: class momentjs has no attribute '__call__'
+2013-07-16 02:23:41,853 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
+2013-07-16 02:23:51,352 ERROR: Exception on /history [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+Traceback (most recent call last):
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+    return fn(*args, **kwargs)
+  File "/home/pi/calzone/app/views.py", line 196, in history
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 125, in render_template
+    context, ctx.app)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 107, in _render
+    rv = template.render(context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 969, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 742, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/pi/calzone/app/templates/history.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "/home/pi/calzone/app/templates/base.html", line 45, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/pi/calzone/app/templates/history.html", line 35, in block "content"
+    {% include 'histdata.html' %}
+  File "/home/pi/calzone/app/templates/histdata.html", line 35, in top-level template code
+    {{momentjs(histdata.timestamp).fromNow()}}
+AttributeError: class momentjs has no attribute '__call__'
+2013-07-16 02:25:40,361 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
+2013-07-16 02:25:58,935 ERROR: Exception on /history [GET] [in /home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py:1306]
+Traceback (most recent call last):
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+    return fn(*args, **kwargs)
+  File "/home/pi/calzone/app/views.py", line 196, in history
+    return render_template('history.html',title = 'History', history = HISTORY,curr_page = page)  #pass history to history template
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 125, in render_template
+    context, ctx.app)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/flask/templating.py", line 107, in _render
+    rv = template.render(context)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 969, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/pi/calzone/flask/local/lib/python2.7/site-packages/jinja2/environment.py", line 742, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/pi/calzone/app/templates/history.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "/home/pi/calzone/app/templates/base.html", line 45, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/pi/calzone/app/templates/history.html", line 35, in block "content"
+    {% include 'histdata.html' %}
+  File "/home/pi/calzone/app/templates/histdata.html", line 35, in top-level template code
+    {{ momentjs(histdata.timestamp).calendar() }}
+AttributeError: class momentjs has no attribute '__call__'
+2013-07-16 02:30:20,931 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
+2013-07-16 02:34:08,133 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
+2013-07-16 02:35:11,889 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
