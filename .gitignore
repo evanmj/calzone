@@ -5,4 +5,5 @@ search.db
 flask
 *.mo
 *.save
-tmp
+*.log
+tmp/
