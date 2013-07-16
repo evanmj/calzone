@@ -160,3 +160,4 @@ AttributeError: class momentjs has no attribute '__call__'
 2013-07-16 02:30:20,931 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
 2013-07-16 02:34:08,133 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
 2013-07-16 02:35:11,889 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
+2013-07-16 02:38:28,741 INFO: calzonee startup [in /home/pi/calzone/app/__init__.py:44]
