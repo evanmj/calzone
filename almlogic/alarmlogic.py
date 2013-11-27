@@ -33,8 +33,8 @@ import pygame
 from almlogic import models
 from almlogic import db
 
-#get user configured zones
-#from config import CONFIGZONES  # TODO: Remove this when zones are defined from the web.
+#import pre-defined emails
+from emails import alarm_notification
 
 #import hardware class from hardware module
 from hardware import hardware  
@@ -115,6 +115,9 @@ def CheckForZoneChange(ZONES_Copy, ZONES):
     #locals
     AtLeastOneChanged = False
 
+    #global
+    global ZoneThatChanged  # which zone changed?  we care if it caused an alarm and need to include it in the email
+
     #start with zones matching
     for zone in ZONES:
         if ZONES_Copy[zone.name] == zone.secured:  #does current status match what we stored?
@@ -129,11 +132,15 @@ def CheckForZoneChange(ZONES_Copy, ZONES):
                 now = datetime.now()
                 z = models.History(source = zone.name, event = 'Zone Breached', timestamp = now)
                 db.session.add(z)
+                #send string to main running loop so it can email it out if this causes an alarm
+                ZoneThatChanged = zone.name + ' Breached While Armed!'
             else:
                 #log change from unsecured to secured here
                 now = datetime.now()
                 z = models.History(source = zone.name, event = 'Zone Secured', timestamp = now)
                 db.session.add(z)
+                #send string to main running loop so it can email it out if this causes an alarm
+                ZoneThatChanged = zone.name + ' Went Secured While Armed!'
             #store ZONES and state changes to DB (only if something changed)
             db.session.commit()
 
@@ -153,6 +160,8 @@ def Run():
     ZonesChanged = False
     ZoneStateStored_Armed = False
     SoundEnabled = True
+    global ZoneThatChanged  # which zone changed?  we care if it caused an alarm and need to include it in the email
+    ZoneThatChanged = 'null'
 
     #pull Zone information from DB, which creates a ZONES 'cursor' (like a Dict)
     ZONES = db.session.query(models.Zones).all()
@@ -199,6 +208,8 @@ def Run():
                     db.session.add(z) 
                     #write the db data which should include the changes in the ZONES cursor
                     db.session.commit() 
+                    #send notification email to users in 'Email' Database table
+#this email breaks it for now...                     alarm_notification(ZoneThatChanged)
                     #start sounding alarm
                     if SoundEnabled:
                         soundfile = models.Settings.query.filter_by(attribute = 'AlarmFile').first()

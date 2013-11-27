@@ -19,9 +19,6 @@ from datetime import datetime
 import re
 import subprocess
 
-#import pre-defined emails
-from emails import alarm_notification
-
 #globals
 SystemArmed = False
 
@@ -155,6 +152,10 @@ def after_login(resp):
         if nickname is None or nickname == "":  #build nickname if null
             nickname = resp.email.split('@')[0]
         user = User(nickname = nickname, email = resp.email, role = ROLE_ADMIN)
+        db.session.add(user)
+        db.session.commit()
+        #Add this user to the Email list automatically as well:
+        emailuser = Email(email = resp.email, html = True)
         db.session.add(user)
         db.session.commit()
     # Is the email returned from OpenID valid, and is the user allowed on the system? 
