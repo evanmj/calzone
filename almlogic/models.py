@@ -3,6 +3,7 @@ from almlogic import db
 import alarmlogic
 from datetime import datetime
 
+#TODO: I think these are used to email the admin logs and such, but it is worth verifying if all of these defs are used.
 ROLE_USER = 0
 ROLE_ADMIN = 1
 
@@ -53,3 +54,9 @@ class History(db.Model):
     source = db.Column(db.String(64))                   #source of entry... user, or zone that caused change
     event = db.Column(db.String(64))                    #type of event, arm, disarm, open, close, etc....
     timestamp = db.Column(db.DateTime)
+
+class Email(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    email = db.Column(db.String(120), unique = True)
+    html = db.Column(db.Boolean, default = 0) #html capable?
+
