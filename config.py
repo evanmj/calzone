@@ -25,7 +25,5 @@ MAIL_USERNAME = 'username'
 MAIL_PASSWORD = 'password'
 
 
-# IO Update Interval
-IOupdateRate = 0.5   #seconds
 
 
