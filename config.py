@@ -15,14 +15,14 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository') + '?check_same_thread=False'
 
 # email server
-DebugEmail = 'evanmj@gmail.com'
+DebugEmail = 'evanmj@gmail.com' #not used I dont think... TODO: Remove
 
 MAIL_SERVER = 'smtp.googlemail.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'username'
-MAIL_PASSWORD = 'password'
+MAIL_USERNAME = 'calzone.test'
+MAIL_PASSWORD = 'aeiouaeiou'
 
 
 

@@ -209,7 +209,7 @@ def Run():
                     #write the db data which should include the changes in the ZONES cursor
                     db.session.commit() 
                     #send notification email to users in 'Email' Database table
-#this email breaks it for now...                     alarm_notification(ZoneThatChanged)
+                    alarm_notification(ZoneThatChanged)
                     #start sounding alarm
                     if SoundEnabled:
                         soundfile = models.Settings.query.filter_by(attribute = 'AlarmFile').first()
